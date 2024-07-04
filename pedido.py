@@ -137,11 +137,11 @@ class Pedido:
         if not self.itens_pedido:
             print("Nenhum produto no pedido.")
             return
-        print("Produtos no pedido:")
+        print("\nProdutos no pedido:")
         for item in self.itens_pedido:
             produto = item['produto']
             quantidade = item['quantidade']
-            print(f"{produto} - Quantidade: {quantidade}")
+            print(f"{produto} - Quantidade: {quantidade}\n")
 
 cadastro = Cadastro()
 estoque = Estoque()
@@ -171,6 +171,7 @@ def menu_pedido():
     print("1 - Adicionar Produto")
     print("2 - Remover Produto")
     print("3 - Visualizar Pedido")
+    print("4 - Finalizar Pedido")
 
 def menu_administrador():
     print("==================")
@@ -213,6 +214,9 @@ while True:
                         pedido.remover_produto(produto_id, quantidade)
                     elif opcao_pedido == "3":
                         pedido.listar_pedido()
+                    elif opcao_pedido == "4":
+                        pedido.listar_pedido()
+                        print("Pedido realizado com sucesso!\n")
                     else:
                         input(f"Valor {opcao_pedido} inválido, tente novamente (Enter) ")
                         continue
@@ -254,6 +258,10 @@ while True:
                             pedido.remover_produto(produto_id, quantidade)
                         elif opcao_pedido == "3":
                             pedido.listar_pedido()
+                        elif opcao_pedido == "4":
+                            pedido.listar_pedido()
+                            print("Pedido realizado com sucesso!\n")
+                            break
                         else:
                             input(f"Valor {opcao_pedido} inválido, tente novamente (Enter) ")
                             continue
