@@ -165,7 +165,7 @@ def menu_cadastro():
 
 def menu_pedido():
     print("==================")
-    print("Menu de Pedido")
+    print("Pedido")
     print("==================")
     print("0 - Sair")
     print("1 - Adicionar Produto")
