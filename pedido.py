@@ -62,14 +62,14 @@ class Produto:
         self.quantidade = quantidade
 
     def __str__(self):
-        return f"{self.nome} - R$ {self.preco:.2f}"
+        return f"{self.nome} - R${self.preco:.2f}"
 
 class Estoque:
     def __init__(self):
         self.produtos = {
-            1: Produto(1, "Arroz", 20.00, 50),
-            2: Produto(2, "Feijão", 10.00, 30),
-            3: Produto(3, "Macarrão", 5.00, 20)
+            1: Produto(1, "Água", 2.50, 500),
+            2: Produto(2, "Arroz", 8.00, 300),
+            3: Produto(3, "Feijão", 10.00, 200)
         }
 
     def listar_estoque_user(self):
@@ -94,6 +94,22 @@ class Pedido:
         self.itens_pedido = []
 
     def adicionar_produto(self, produto_id, quantidade):
+        if quantidade > 10:
+            print("Você só pode comprar até 10 unidades de cada produto.")
+            return
+
+        if produto_id in self.estoque.produtos:
+            produto = self.estoque.produtos[produto_id]
+            if produto.quantidade >= quantidade:
+                produto.quantidade -= quantidade
+                self.itens_pedido.append({'produto': produto, 'quantidade': quantidade})
+                print(f"{quantidade} unidades de {produto.nome} adicionadas ao pedido.")
+            else:
+                print("Quantidade insuficiente no estoque.")
+        else:
+            print("Produto não encontrado.")
+
+    def adicionar_produto_ong(self, produto_id, quantidade):
         if produto_id in self.estoque.produtos:
             produto = self.estoque.produtos[produto_id]
             if produto.quantidade >= quantidade:
@@ -127,7 +143,6 @@ class Pedido:
             quantidade = item['quantidade']
             print(f"{produto} - Quantidade: {quantidade}")
 
-# Instâncias
 cadastro = Cadastro()
 estoque = Estoque()
 pedido = Pedido(estoque)
@@ -148,9 +163,9 @@ def menu_cadastro():
     print("1 - Registrar")
     print("2 - Entrar")
 
-def menu_usuario():
+def menu_pedido():
     print("==================")
-    print("Menu de Usuário")
+    print("Menu de Pedido")
     print("==================")
     print("0 - Sair")
     print("1 - Adicionar Produto")
@@ -164,8 +179,7 @@ def menu_administrador():
     print("0 - Sair")
     print("1 - Visualizar Estoque")
     print("2 - Catalogar Produto")
-    print("3 - Atualizar Preço") #fazer
-    print("4 - Realizar Pedido") #fazer
+    print("3 - Realizar Pedido")
 
 while True:
     menu_principal()
@@ -184,23 +198,23 @@ while True:
         elif opcao_cadastro == "2":
             if cadastro.entrar_usuario():
                 while True:
-                    menu_usuario()
-                    opcao_usuario = input("Escolha: ")
-                    if opcao_usuario == "0":
+                    menu_pedido()
+                    opcao_pedido = input("Escolha: ")
+                    if opcao_pedido == "0":
                         break
-                    elif opcao_usuario == "1":
+                    elif opcao_pedido == "1":
                         estoque.listar_estoque_user()
                         produto_id = int(input("ID do produto: "))
-                        quantidade = int(input("Quantidade: "))
+                        quantidade = int(input("Quantidade (máximo 10): "))
                         pedido.adicionar_produto(produto_id, quantidade)
-                    elif opcao_usuario == "2":
+                    elif opcao_pedido == "2":
                         produto_id = int(input("ID do produto: "))
                         quantidade = int(input("Quantidade: "))
                         pedido.remover_produto(produto_id, quantidade)
-                    elif opcao_usuario == "3":
+                    elif opcao_pedido == "3":
                         pedido.listar_pedido()
                     else:
-                        input(f"Valor {opcao_usuario} inválido, tente novamente (Enter) ")
+                        input(f"Valor {opcao_pedido} inválido, tente novamente (Enter) ")
                         continue
             else:
                 input("Tente novamente (Enter) ")
@@ -223,15 +237,31 @@ while True:
                     novo_produto = Produto(novo_id, nome, preco, quantidade)
                     estoque.produtos[novo_id] = novo_produto
                     print(f"Produto {nome} adicionado ao estoque.")
+                elif opcao_administrador == "3":
+                    while True:
+                        menu_pedido()
+                        opcao_pedido = input("Escolha: ")
+                        if opcao_pedido == "0":
+                            break
+                        elif opcao_pedido == "1":
+                            estoque.listar_estoque_adm()
+                            produto_id = int(input("ID do produto: "))
+                            quantidade = int(input("Quantidade: "))
+                            pedido.adicionar_produto_ong(produto_id, quantidade)
+                        elif opcao_pedido == "2":
+                            produto_id = int(input("ID do produto: "))
+                            quantidade = int(input("Quantidade: "))
+                            pedido.remover_produto(produto_id, quantidade)
+                        elif opcao_pedido == "3":
+                            pedido.listar_pedido()
+                        else:
+                            input(f"Valor {opcao_pedido} inválido, tente novamente (Enter) ")
+                            continue
                 else:
                     input(f"Valor {opcao_administrador} inválido, tente novamente (Enter) ")
                     continue
         else:
             input("Tente novamente (Enter) ")
-    elif opcao == "3":
-        break
-    elif opcao == "4":
-        break
     else:
         input(f"Valor {opcao} inválido, tente novamente (Enter) ")
         continue
