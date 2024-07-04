@@ -1,3 +1,4 @@
+# Classes principais do código, que serão manipuladas posteriormente
 class Usuario:
     def __init__(self, cpf, email, senha):
         self.cpf = cpf
@@ -9,7 +10,20 @@ class Administrador:
         self.usuario = usuario
         self.senha = senha
 
+class Produto:
+    def __init__(self, id, nome, preco, quantidade):
+        self.id = id
+        self.nome = nome
+        self.preco = preco
+        self.quantidade = quantidade
+
+    # Representação de como o objeto será visualizado
+    def __str__(self):
+        return f"{self.nome} - R${self.preco:.2f}"
+
+# Gerencia o cadastro de usuários e de um administrador
 class Cadastro:
+    # Adicionados tanto um usuário genérico como um administrador
     def __init__(self):
         self.usuarios = [
             Usuario("12345", "email@gmail.com", "senha123"),
@@ -18,6 +32,7 @@ class Cadastro:
             Administrador("admin", "admin")
         ]
 
+    # Registro de novos usuários, com uma verificação de senha e adicionando o usuário cadastrado a lista de usuários
     def registrar_usuario(self):
         cpf = input("Digite seu CPF: ")
         email = input("Digite seu Email: ")
@@ -32,8 +47,9 @@ class Cadastro:
         self.usuarios.append(novo_usuario)
         print("\nUsuário registrado\n")
 
+    # Login para usuários já cadastrados, verifica se há um registro anterior dos dados colocados e informa qual usuário foi logado
     def entrar_usuario(self):
-        cpf_ou_email = input("Digite seu CPF ou Email: ")
+        cpf_ou_email = input("Digite seu Usuário (CPF ou Email): ")
         senha = input("Digite sua Senha: ")
         
         for usuario in self.usuarios:
@@ -43,6 +59,7 @@ class Cadastro:
         print("\nUsuário ou senha incorretos\n")
         return False
     
+    # Login para administradores
     def validar_administrador(self):
         usuario = input("Digite o usuário: ")
         senha = input("Digite a senha: ")
@@ -54,16 +71,7 @@ class Cadastro:
         print("\nUsuário ou senha incorretos\n")
         return False
 
-class Produto:
-    def __init__(self, id, nome, preco, quantidade):
-        self.id = id
-        self.nome = nome
-        self.preco = preco
-        self.quantidade = quantidade
-
-    def __str__(self):
-        return f"{self.nome} - R${self.preco:.2f}"
-
+# Gerencia o estoque de produtos, adicionados produtos genéricos já catalogados
 class Estoque:
     def __init__(self):
         self.produtos = {
@@ -72,6 +80,7 @@ class Estoque:
             3: Produto(3, "Feijão", 10.00, 200)
         }
 
+    # Apresenta o estoque atual de cada produto, o método para administradores mostra também a quantidade
     def listar_estoque_user(self):
         print("Estoque atual:")
         for produto in self.produtos.values():
@@ -82,18 +91,22 @@ class Estoque:
         for produto in self.produtos.values():
             print(f"ID: {produto.id} - {produto} - Quantidade: {produto.quantidade}")
 
+    # Atualiza a quantidade do produto após ser manipulado durante a realização do pedido
     def atualizar_quantidade(self, produto_id, quantidade):
         if produto_id in self.produtos:
             self.produtos[produto_id].quantidade += quantidade
             return True
         return False
 
+# Classe responsável pela realização dos pedidos, irá retirar da quantidade dos produtos listados em estoque, o qual é representado pelo método "atualizar_quantidade"
 class Pedido:
     def __init__(self, estoque):
         self.estoque = estoque
-        self.itens_pedido = []
+        self.itens_pedido = [] # Lista que será populada
 
+    # Adiciona produtos ao pedido, apenas após verificar a existência e possibilidade de retirada a quantia do estoque
     def adicionar_produto(self, produto_id, quantidade):
+        # Compras limitadas devido ao momento de calamidade para usuários únicos
         if quantidade > 10:
             print("Você só pode comprar até 10 unidades de cada produto.")
             return
@@ -109,6 +122,7 @@ class Pedido:
         else:
             print("Produto não encontrado.")
 
+    # Diferentemente do método anterior, não há limitação de compra, mas esse método só é chamado pelo painel de administrador
     def adicionar_produto_ong(self, produto_id, quantidade):
         if produto_id in self.estoque.produtos:
             produto = self.estoque.produtos[produto_id]
@@ -121,6 +135,7 @@ class Pedido:
         else:
             print("Produto não encontrado.")
 
+    # Remove produtos adicionados anteriormente ao pedido, verifica se há a quantidade à ser removida
     def remover_produto(self, produto_id, quantidade):
         for item in self.itens_pedido:
             if item['produto'].id == produto_id:
@@ -133,6 +148,7 @@ class Pedido:
                     return
         print("Produto não encontrado no pedido ou quantidade insuficiente.")
 
+    # Listagem dos produtos adicionados ao pedido
     def listar_pedido(self):
         if not self.itens_pedido:
             print("Nenhum produto no pedido.")
@@ -143,10 +159,12 @@ class Pedido:
             quantidade = item['quantidade']
             print(f"{produto} - Quantidade: {quantidade}\n")
 
+# Instâncias responsáveis pelo funcionamento do programa, com estoque sendo utilizado como argumento pois o objeto pedido precisa de acesso ao objeto estoque para funcionar corretamente
 cadastro = Cadastro()
 estoque = Estoque()
 pedido = Pedido(estoque)
 
+# Menus
 def menu_principal():
     print("==================")
     print("Menu Principal")
@@ -182,6 +200,7 @@ def menu_administrador():
     print("2 - Catalogar Produto")
     print("3 - Realizar Pedido")
 
+# Loop principal do programa
 while True:
     menu_principal()
     opcao = input("Escolha: ")
@@ -237,7 +256,7 @@ while True:
                     nome = input("Nome do produto: ")
                     preco = float(input("Preço do produto: "))
                     quantidade = int(input("Quantidade: "))
-                    novo_id = max(estoque.produtos.keys()) + 1
+                    novo_id = max(estoque.produtos.keys()) + 1 # Garante que cada produto adicionado terá um ID maior que o anterior
                     novo_produto = Produto(novo_id, nome, preco, quantidade)
                     estoque.produtos[novo_id] = novo_produto
                     print(f"Produto {nome} adicionado ao estoque.")
