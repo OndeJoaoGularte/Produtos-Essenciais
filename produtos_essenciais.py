@@ -1,3 +1,5 @@
+# GRUPO: jOÃO GULARTE, KAUAN MAGNABOSCO e GUILHERME FONTOURA
+
 # Classes principais do código, que serão manipuladas posteriormente
 class Usuario:
     def __init__(self, cpf, email, senha):
@@ -292,3 +294,7 @@ while True:
     else:
         input(f"Valor {opcao} inválido, tente novamente (Enter) ")
         continue
+    
+######################## _MAIN_ #####################################
+
+menu_principal()
