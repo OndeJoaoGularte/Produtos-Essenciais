@@ -166,10 +166,11 @@ class Pedido:
         if not self.itens_pedido:
             print("\nNenhum produto no pedido para finalizar.\n")
             return
-
+        # Soma o preço de cada item para obtermos o valor total
         total = sum(item['produto'].preco * item['quantidade'] for item in self.itens_pedido)
         print(f"\nValor total do pedido: R${total:.2f}")
         
+        # Limpa a lista para que possamos prosseguir para o próximo pedido
         self.itens_pedido = []
         print("\nPedido finalizado com sucesso.\n")
 
