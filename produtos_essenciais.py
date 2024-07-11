@@ -110,7 +110,7 @@ class Pedido:
     def adicionar_produto(self, produto_id, quantidade):
         # Compras limitadas devido ao momento de calamidade para usuários únicos
         if quantidade > 10:
-            print("Você só pode comprar até 10 unidades de cada produto.")
+            print("\nVocê só pode comprar até 10 unidades de cada produto.\n")
             return
 
         if produto_id in self.estoque.produtos:
@@ -118,11 +118,11 @@ class Pedido:
             if produto.quantidade >= quantidade:
                 produto.quantidade -= quantidade
                 self.itens_pedido.append({'produto': produto, 'quantidade': quantidade})
-                print(f"{quantidade} unidades de {produto.nome} adicionadas ao pedido.")
+                print(f"\n{quantidade} unidades de {produto.nome} adicionadas ao pedido.\n")
             else:
-                print("Quantidade insuficiente no estoque.")
+                print("\nQuantidade insuficiente no estoque.\n")
         else:
-            print("Produto não encontrado.")
+            print("\nProduto não encontrado.\n")
 
     # Diferentemente do método anterior, não há limitação de compra, mas esse método só é chamado pelo painel de administrador
     def adicionar_produto_ong(self, produto_id, quantidade):
@@ -131,11 +131,11 @@ class Pedido:
             if produto.quantidade >= quantidade:
                 produto.quantidade -= quantidade
                 self.itens_pedido.append({'produto': produto, 'quantidade': quantidade})
-                print(f"{quantidade} unidades de {produto.nome} adicionadas ao pedido.")
+                print(f"\n{quantidade} unidades de {produto.nome} adicionadas ao pedido.\n")
             else:
-                print("Quantidade insuficiente no estoque.")
+                print("\nQuantidade insuficiente no estoque.\n")
         else:
-            print("Produto não encontrado.")
+            print("\nProduto não encontrado.\n")
 
     # Remove produtos adicionados anteriormente ao pedido, verifica se há a quantidade à ser removida
     def remover_produto(self, produto_id, quantidade):
@@ -146,20 +146,32 @@ class Pedido:
                     self.estoque.atualizar_quantidade(produto_id, quantidade)
                     if item['quantidade'] == 0:
                         self.itens_pedido.remove(item)
-                    print(f"{quantidade} unidades de {item['produto'].nome} removidas do pedido.")
+                    print(f"\n{quantidade} unidades de {item['produto'].nome} removidas do pedido.\n")
                     return
-        print("Produto não encontrado no pedido ou quantidade insuficiente.")
+        print("\nProduto não encontrado no pedido ou quantidade insuficiente.\n")
 
     # Listagem dos produtos adicionados ao pedido
     def listar_pedido(self):
         if not self.itens_pedido:
-            print("Nenhum produto no pedido.")
+            print("\nNenhum produto no pedido.\n")
             return
-        print("\nProdutos no pedido:")
+        print("\nProdutos no pedido:\n")
         for item in self.itens_pedido:
             produto = item['produto']
             quantidade = item['quantidade']
-            print(f"{produto} - Quantidade: {quantidade}\n")
+            print(f"{produto} - Quantidade: {quantidade}")
+
+    # Finaliza o pedido e retorna o valor final
+    def finalizar_pedido(self):
+        if not self.itens_pedido:
+            print("\nNenhum produto no pedido para finalizar.\n")
+            return
+
+        total = sum(item['produto'].preco * item['quantidade'] for item in self.itens_pedido)
+        print(f"\nValor total do pedido: R${total:.2f}")
+        
+        self.itens_pedido = []
+        print("\nPedido finalizado com sucesso.\n")
 
 # Instâncias responsáveis pelo funcionamento do programa, com estoque sendo utilizado como argumento pois o objeto pedido precisa de acesso ao objeto estoque para funcionar corretamente
 cadastro = Cadastro()
@@ -236,8 +248,7 @@ while True:
                     elif opcao_pedido == "3":
                         pedido.listar_pedido()
                     elif opcao_pedido == "4":
-                        pedido.listar_pedido()
-                        print("Pedido realizado com sucesso!\n")
+                        pedido.finalizar_pedido()
                     else:
                         input(f"Valor {opcao_pedido} inválido, tente novamente (Enter) ")
                         continue
@@ -280,9 +291,7 @@ while True:
                         elif opcao_pedido == "3":
                             pedido.listar_pedido()
                         elif opcao_pedido == "4":
-                            pedido.listar_pedido()
-                            print("Pedido realizado com sucesso!\n")
-                            break
+                           pedido.finalizar_pedido()
                         else:
                             input(f"Valor {opcao_pedido} inválido, tente novamente (Enter) ")
                             continue
@@ -294,7 +303,3 @@ while True:
     else:
         input(f"Valor {opcao} inválido, tente novamente (Enter) ")
         continue
-    
-######################## _MAIN_ #####################################
-
-menu_principal()
